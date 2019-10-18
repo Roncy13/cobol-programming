@@ -1,30 +1,43 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PAYROLL-APP.
        ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+       SELECT USER-INFO ASSIGN TO "../USER-INFO.DAT"
+		      ORGANIZATION IS LINE SEQUENTIAL.
        DATA DIVISION.
-       WORKING-STORAGE SECTION.
-       01  USER-INFO.
-           02  EMPLOYEE_NO  PIC 9(10).
-           02  FULL_NAME PIC X(50).
-           02  PASSWORD PIC X(50).
-           02  SCHEDULE PIC X(50).
-           02  TIME-SCHED PIC X(50).
-           02  SALARY-PER-HOUR PIC 9(10).
-       01  TIME-SHEET.
-           02  T_EMPLOYEE_NO PIC X(50).
-           02  T-IN PIC X(50).
-           02  T-OUT PIC X(50).
-           02  DATE_REPORT PIC X(50).
-       01  QUESTION.
-           02  YES-NO PIC X(1).
+           FILE SECTION.
+           FD USER-INFO.
+           001 USER-INFO-FILE.
+               02  W_EMPLOYEE_NO  PIC 9(10).
+               02  W_FULL_NAME PIC X(50).
+               02  W_PASSWORD PIC X(50).
+               02  W_SCHEDULE PIC X(50).
+               02  W_TIME-SCHED PIC X(50).
+               02  W_SALARY-PER-HOUR PIC 9(10).
 
+           WORKING-STORAGE SECTION.
+           01  EMPLOYEE-INFO.
+               02  EMPLOYEE_NO  PIC 9(10).
+               02  FULL_NAME PIC X(50).
+               02  PASSWORD PIC X(50).
+               02  SCHEDULE PIC X(50).
+               02  TIME-SCHED PIC X(50).
+               02  SALARY-PER-HOUR PIC 9(10).
+           01  TIME-SHEET.
+               02  T_EMPLOYEE_NO PIC X(50).
+               02  T-IN PIC X(50).
+               02  T-OUT PIC X(50).
+               02  DATE_REPORT PIC X(50).
+           01  QUESTION.
+               02  YES-NO PIC X(1).
        PROCEDURE DIVISION.
            PERFORM ASK-QUESTION.
 
        ASK-QUESTION.
            PERFORM ADD-USER.
-           PERFORM USER-INFO-ENTERED.
            PERFORM ASK-USER.
+           PERFORM ASK-AGAIN-TO-WRITE.
 
        ADD-USER.
            DISPLAY "ENTER EMPLOYEE NO: ".
@@ -40,22 +53,38 @@
            DISPLAY "ENTER SALARY PER HOUR: "
            ACCEPT SALARY-PER-HOUR.
 
-       USER-INFO-ENTERED.
-           DISPLAY "EMPLOYEE NO: ", EMPLOYEE_NO.
-           DISPLAY "FULL NAME: ", FULL_NAME.
-           DISPLAY "PASSWORD: ", PASSWORD.
-           DISPLAY "SCHEDULE, (SEPERATED IN -) EX: (M-W-F)", SCHEDULE.
-           DISPLAY "TIME-SCHED, EX 8:30 AM - 9:30 AM", TIME-SCHED.
-           DISPLAY "SALARY PER HOUR: ",SALARY-PER-HOUR.
-
        ASK-USER.
            DISPLAY "ARE DETAILS RIGHT (Y/N)?".
            ACCEPT YES-NO.
            EVALUATE TRUE
                WHEN YES-NO = "Y" OR YES-NO = "y"
-                   STOP RUN
+                   PERFORM WRITE-USER-ENTERED
                WHEN YES-NO = "N" OR YES-NO = "n"
                    PERFORM ASK-QUESTION
                WHEN OTHER
                    PERFORM ASK-USER
+           END-EVALUATE.
+
+       WRITE-USER-ENTERED.
+           OPEN EXTEND USER-INFO.
+               MOVE EMPLOYEE_NO TO W_EMPLOYEE_NO.
+               MOVE FULL_NAME TO W_FULL_NAME.
+               MOVE PASSWORD TO W_PASSWORD.
+               MOVE SCHEDULE TO W_SCHEDULE.
+               MOVE TIME-SCHED TO W_TIME-SCHED.
+               MOVE SALARY-PER-HOUR TO W_SALARY-PER-HOUR.
+               WRITE USER-INFO-FILE
+               END-WRITE.
+           CLOSE USER-INFO.
+
+       ASK-AGAIN-TO-WRITE.
+           DISPLAY "WOULD YOU LIKE TO ADD ANOTHER EMPLOYEE ?".
+           ACCEPT YES-NO
+           EVALUATE TRUE
+               WHEN YES-NO = "Y" OR YES-NO = "y"
+                   PERFORM ASK-QUESTION
+               WHEN YES-NO = "N" OR YES-NO = "n"
+                   STOP RUN
+               WHEN OTHER
+                   PERFORM ASK-AGAIN-TO-WRITE
            END-EVALUATE.
