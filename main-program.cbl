@@ -23,6 +23,13 @@
                02  SCHEDULE PIC X(50).
                02  TIME-SCHED PIC X(50).
                02  SALARY-PER-HOUR PIC 9(10).
+           01  SEARCH-EMPLOYEE-INFO.
+               02  S_EMPLOYEE_NO  PIC 9(10).
+               02  S_FULL_NAME PIC X(50).
+               02  S_PASSWORD PIC X(50).
+               02  S_SCHEDULE PIC X(50).
+               02  S_TIME-SCHED PIC X(50).
+               02  S_SALARY-PER-HOUR PIC 9(10).
            01  TIME-SHEET.
                02  T_EMPLOYEE_NO PIC X(50).
                02  T-IN PIC X(50).
@@ -32,24 +39,53 @@
                02  YES-NO PIC X(1).
                02  WHAT-TO-DO PIC 9(2).
                02  WS-EOF PIC A(1).
+               02  ASK_EMPLOYEE_NO PIC X(10).
        PROCEDURE DIVISION.
            PERFORM ASK-WHAT-TO-DO.
 
        ASK-WHAT-TO-DO.
            DISPLAY "PRESS 1 TO ADD EMPLOYEE".
            DISPLAY "PRESS 2 TO VIEW EMPLOYEE".
-           DISPLAY "PRESS 3 TO EXIT PROGRAM".
+           DISPLAY "PRESS 3 TO SEARCH EMPLOYEE BY EMPLOYEE-NO".
+           DISPLAY "PRESS 4 TO EXIT PROGRAM".
            PERFORM SPACE-ENTER.
            ACCEPT WHAT-TO-DO.
 
            EVALUATE TRUE
                WHEN WHAT-TO-DO = 1 PERFORM ASK-QUESTION
                WHEN WHAT-TO-DO = 2 PERFORM DISPLAY-USERS
-               WHEN WHAT-TO-DO = 3 STOP RUN
+               WHEN WHAT-TO-DO = 3 PERFORM ASK-EMP-NO
+               WHEN WHAT-TO-DO = 4 STOP RUN
                WHEN OTHER
-                   DISPLAY "PLEASE ENTER DIGITS 1 - 3"
+                   DISPLAY "PLEASE ENTER DIGITS 1 - 4"
                    PERFORM ASK-WHAT-TO-DO
            END-EVALUATE.
+
+       ASK-EMP-NO.
+           DISPLAY "ENTER EMPLOYEE NO, WRITE C TO GO BACK TO MENU".
+           ACCEPT ASK_EMPLOYEE_NO.
+
+           EVALUATE TRUE
+               WHEN ASK_EMPLOYEE_NO = "C" OR ASK_EMPLOYEE_NO = "c"
+                   PERFORM ASK-WHAT-TO-DO
+               WHEN ASK_EMPLOYEE_NO NOT = SPACE
+                   PERFORM SEARCH-EMPLOYEE-BY-NO
+               WHEN OTHER
+                   PERFORM ASK-AGAIN-TO-WRITE
+           END-EVALUATE.
+
+       SEARCH-EMPLOYEE-BY-NO.
+           OPEN INPUT USER-INFO.
+               PERFORM UNTIL WS-EOF='Y'
+                   READ USER-INFO INTO EMPLOYEE-INFO
+                      AT END MOVE 'Y' TO WS-EOF
+                      NOT AT END DISPLAY EMPLOYEE-INFO
+                   END-READ
+               END-PERFORM.
+           CLOSE USER-INFO.
+           MOVE 'N' TO WS-EOF.
+           PERFORM SPACE-ENTER.
+           PERFORM ASK-WHAT-TO-DO.
 
        DISPLAY-USERS.
            OPEN INPUT USER-INFO.
