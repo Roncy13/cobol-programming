@@ -35,11 +35,12 @@
                02  T-IN PIC X(50).
                02  T-OUT PIC X(50).
                02  DATE_REPORT PIC X(50).
-           01  QUESTION.
+           01  UTILITIES.
                02  YES-NO PIC X(1).
                02  WHAT-TO-DO PIC 9(2).
                02  WS-EOF PIC A(1).
                02  ASK_EMPLOYEE_NO PIC X(10).
+
        PROCEDURE DIVISION.
            PERFORM ASK-WHAT-TO-DO.
 
@@ -76,16 +77,29 @@
 
        SEARCH-EMPLOYEE-BY-NO.
            OPEN INPUT USER-INFO.
-               PERFORM UNTIL WS-EOF='Y'
+               PERFORM UNTIL WS-EOF='Y' OR WS-EOF = 'S'
                    READ USER-INFO INTO EMPLOYEE-INFO
                       AT END MOVE 'Y' TO WS-EOF
-                      NOT AT END DISPLAY EMPLOYEE-INFO
+                      NOT AT END PERFORM CHECK-EMPLOYEE-INFO-BY-NO
                    END-READ
                END-PERFORM.
            CLOSE USER-INFO.
+
+           IF WS-EOF NOT = 'S'
+               DISPLAY "EMPLOYEE NO DOES NOT EXIST", ASK_EMPLOYEE_NO
+           END-IF.
+
            MOVE 'N' TO WS-EOF.
            PERFORM SPACE-ENTER.
            PERFORM ASK-WHAT-TO-DO.
+
+       CHECK-EMPLOYEE-INFO-BY-NO.
+           IF EMPLOYEE_NO = FUNCTION NUMVAL(ASK_EMPLOYEE_NO)
+               DISPLAY "USER EXIST...!"
+               MOVE EMPLOYEE-INFO TO SEARCH-EMPLOYEE-INFO
+               DISPLAY SEARCH-EMPLOYEE-INFO
+               MOVE 'S' TO WS-EOF
+           END-IF.
 
        DISPLAY-USERS.
            OPEN INPUT USER-INFO.
@@ -102,6 +116,7 @@
 
        SPACE-ENTER.
            DISPLAY "----------------------------".
+           DISPLAY " ".
 
        ASK-QUESTION.
            PERFORM ADD-USER.
@@ -148,13 +163,13 @@
            CLOSE USER-INFO.
 
        ASK-AGAIN-TO-WRITE.
-           DISPLAY "WOULD YOU LIKE TO ADD ANOTHER EMPLOYEE ?".
+           DISPLAY "WOULD YOU LIKE TO ADD ANOTHER EMPLOYEE: (Y/N) ?".
            ACCEPT YES-NO
            EVALUATE TRUE
                WHEN YES-NO = "Y" OR YES-NO = "y"
                    PERFORM ASK-QUESTION
                WHEN YES-NO = "N" OR YES-NO = "n"
-                   STOP RUN
+                   PERFORM ASK-WHAT-TO-DO
                WHEN OTHER
                    PERFORM ASK-AGAIN-TO-WRITE
            END-EVALUATE.
