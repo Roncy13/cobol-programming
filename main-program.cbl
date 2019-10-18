@@ -15,7 +15,6 @@
                02  W_SCHEDULE PIC X(50).
                02  W_TIME-SCHED PIC X(50).
                02  W_SALARY-PER-HOUR PIC 9(10).
-
            WORKING-STORAGE SECTION.
            01  EMPLOYEE-INFO.
                02  EMPLOYEE_NO  PIC 9(10).
@@ -32,6 +31,7 @@
            01  QUESTION.
                02  YES-NO PIC X(1).
                02  WHAT-TO-DO PIC 9(2).
+               02  WS-EOF PIC A(1).
        PROCEDURE DIVISION.
            PERFORM ASK-WHAT-TO-DO.
 
@@ -51,8 +51,16 @@
            END-EVALUATE.
 
        DISPLAY-USERS.
-           DISPLAY "I WILL DISPLAY USERS",
-           STOP RUN.
+           OPEN INPUT USER-INFO.
+               PERFORM UNTIL WS-EOF='Y'
+                   READ USER-INFO INTO EMPLOYEE-INFO
+                      AT END MOVE 'Y' TO WS-EOF
+                      NOT AT END DISPLAY EMPLOYEE-INFO
+                   END-READ
+               END-PERFORM.
+           CLOSE USER-INFO.
+           MOVE 'N' TO WS-EOF.
+           PERFORM ASK-WHAT-TO-DO.
 
        ASK-QUESTION.
            PERFORM ADD-USER.
