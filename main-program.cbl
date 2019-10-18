@@ -31,8 +31,28 @@
                02  DATE_REPORT PIC X(50).
            01  QUESTION.
                02  YES-NO PIC X(1).
+               02  WHAT-TO-DO PIC 9(2).
        PROCEDURE DIVISION.
-           PERFORM ASK-QUESTION.
+           PERFORM ASK-WHAT-TO-DO.
+
+       ASK-WHAT-TO-DO.
+           DISPLAY "PRESS 1 TO ADD EMPLOYEE".
+           DISPLAY "PRESS 2 TO VIEW EMPLOYEE".
+           DISPLAY "PRESS 3 TO EXIT PROGRAM".
+           ACCEPT WHAT-TO-DO.
+
+           EVALUATE TRUE
+               WHEN WHAT-TO-DO = 1 PERFORM ASK-QUESTION
+               WHEN WHAT-TO-DO = 2 PERFORM DISPLAY-USERS
+               WHEN WHAT-TO-DO = 3 STOP RUN
+               WHEN OTHER
+                   DISPLAY "PLEASE ENTER DIGITS 1 - 3"
+                   PERFORM ASK-WHAT-TO-DO
+           END-EVALUATE.
+
+       DISPLAY-USERS.
+           DISPLAY "I WILL DISPLAY USERS",
+           STOP RUN.
 
        ASK-QUESTION.
            PERFORM ADD-USER.
