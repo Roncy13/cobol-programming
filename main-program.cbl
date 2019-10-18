@@ -39,6 +39,7 @@
            DISPLAY "PRESS 1 TO ADD EMPLOYEE".
            DISPLAY "PRESS 2 TO VIEW EMPLOYEE".
            DISPLAY "PRESS 3 TO EXIT PROGRAM".
+           PERFORM SPACE-ENTER.
            ACCEPT WHAT-TO-DO.
 
            EVALUATE TRUE
@@ -60,7 +61,11 @@
                END-PERFORM.
            CLOSE USER-INFO.
            MOVE 'N' TO WS-EOF.
+           PERFORM SPACE-ENTER.
            PERFORM ASK-WHAT-TO-DO.
+
+       SPACE-ENTER.
+           DISPLAY "----------------------------".
 
        ASK-QUESTION.
            PERFORM ADD-USER.
@@ -70,16 +75,22 @@
        ADD-USER.
            DISPLAY "ENTER EMPLOYEE NO: ".
            ACCEPT EMPLOYEE_NO.
+           PERFORM SPACE-ENTER.
            DISPLAY "ENTER FULL NAME: ".
            ACCEPT FULL_NAME.
+           PERFORM SPACE-ENTER.
            DISPLAY "ENTER PASSWORD: ".
            ACCEPT PASSWORD .
+           PERFORM SPACE-ENTER.
            DISPLAY "ENTER SCHEDULE, (SEPERATED IN -) EX: (M-W-F)".
            ACCEPT SCHEDULE.
+           PERFORM SPACE-ENTER.
            DISPLAY "ENTER TIME-SCHED, EX 8:30 AM - 9:30 PM".
            ACCEPT TIME-SCHED.
+           PERFORM SPACE-ENTER.
            DISPLAY "ENTER SALARY PER HOUR: "
            ACCEPT SALARY-PER-HOUR.
+           PERFORM SPACE-ENTER.
 
        ASK-USER.
            DISPLAY "ARE DETAILS RIGHT (Y/N)?".
@@ -95,12 +106,7 @@
 
        WRITE-USER-ENTERED.
            OPEN EXTEND USER-INFO.
-               MOVE EMPLOYEE_NO TO W_EMPLOYEE_NO.
-               MOVE FULL_NAME TO W_FULL_NAME.
-               MOVE PASSWORD TO W_PASSWORD.
-               MOVE SCHEDULE TO W_SCHEDULE.
-               MOVE TIME-SCHED TO W_TIME-SCHED.
-               MOVE SALARY-PER-HOUR TO W_SALARY-PER-HOUR.
+               MOVE EMPLOYEE-INFO TO USER-INFO-FILE.
                WRITE USER-INFO-FILE
                END-WRITE.
            CLOSE USER-INFO.
