@@ -35,7 +35,7 @@
            ACCEPT PASSWORD .
            DISPLAY "ENTER SCHEDULE, (SEPERATED IN -) EX: (M-W-F)".
            ACCEPT SCHEDULE.
-           DISPLAY "ENTER TIME-SCHED, EX 8:30 AM - 9:30 AM".
+           DISPLAY "ENTER TIME-SCHED, EX 8:30 AM - 9:30 PM".
            ACCEPT TIME-SCHED.
            DISPLAY "ENTER SALARY PER HOUR: "
            ACCEPT SALARY-PER-HOUR.
@@ -57,5 +57,5 @@
                WHEN YES-NO = "N" OR YES-NO = "n"
                    PERFORM ASK-QUESTION
                WHEN OTHER
-                   STOP RUN
+                   PERFORM ASK-USER
            END-EVALUATE.
